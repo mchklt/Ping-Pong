@@ -1,8 +1,6 @@
+#PingPong Host Monitoring Tool
 
-
-# PingPong Host Monitoring Tool
-
-PingPong is a Bash script that provides a simple solution for monitoring the status of hosts (IP addresses) using ping. It allows you to add, remove, display, clean duplicate entries, and count unique IPs. The script includes built-in support for notifications, enabling you to receive alerts when a host is reachable or becomes live.
+**PingPong** is a Bash script that provides a simple solution for monitoring the status of hosts (IP addresses) using ping. It allows you to add, remove, display, clean duplicate entries, and count unique IPs. The script includes built-in support for notifications, enabling you to receive alerts when a host is reachable or becomes live.
 
 ## Features
 - **Ping Hosts**: Continuously monitor the status of IP addresses using ping.
