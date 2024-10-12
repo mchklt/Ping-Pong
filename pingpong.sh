@@ -1,74 +1,64 @@
 #!/bin/bash
 
-IP_LIST="/root/hunt/monitor/ip_list.txt"
+IP_LIST="/usr/local/bin/pingpong/ip_list.txt"
 
 add_ip() {
-    echo "$1" >> "$IP_LIST"
-    echo "Successfully added $1 to the IP list."
-}
-
-check_ip_exists() {
-    if grep -Fxq "$1" "$IP_LIST"; then
-        echo "The IP address $1 is already in the list."
-    else
-        add_ip "$1"
-    fi
+    local ip=$1
+    echo "$ip" >> "$IP_LIST"
+    echo "Added $ip to the IP list."
 }
 
 clean_ip_list() {
     if [[ -f "$IP_LIST" ]]; then
         sort -u "$IP_LIST" -o "$IP_LIST"
-        echo "The IP list has been cleaned up. Duplicate entries have been removed."
+        echo "Cleaned up the IP list: duplicates removed."
     else
-        echo "Sorry, the IP list file could not be found."
+        echo "IP list file not found!"
     fi
 }
 
-show_ip_list() {
+show_ips() {
     if [[ -f "$IP_LIST" ]]; then
-        echo "Here are the current IP addresses in the list:"
+        echo "Currently monitored IP addresses:"
         cat "$IP_LIST"
     else
-        echo "Sorry, the IP list file could not be found."
-    fi
-}
-
-remove_ip() {
-    if grep -Fxq "$1" "$IP_LIST"; then
-        sed -i "/$1/d" "$IP_LIST"
-        echo "The IP address $1 has been removed from the list."
-    else
-        echo "The IP address $1 is not in the list."
+        echo "IP list file not found!"
     fi
 }
 
 count_ips() {
     if [[ -f "$IP_LIST" ]]; then
-        total_ips=$(wc -l < "$IP_LIST")
-        echo "There are currently $total_ips unique IP addresses in the list."
+        unique_count=$(sort -u "$IP_LIST" | wc -l)
+        echo "Total unique IP addresses: $unique_count"
     else
-        echo "Sorry, the IP list file could not be found."
+        echo "IP list file not found!"
     fi
 }
 
-case "$1" in
-    --add|a)
-        check_ip_exists "$2"
+if [[ $# -eq 0 ]]; then
+    echo "Usage: $0 --add <IP_ADDRESS> | --clean | --show | --count"
+    exit 1
+fi
+
+case $1 in
+    --add | a)
+        if [[ -z "$2" ]]; then
+            echo "Usage: $0 --add <IP_ADDRESS>"
+            exit 1
+        fi
+        add_ip "$2"
         ;;
-    --clean|c)
+    --clean | c)
         clean_ip_list
         ;;
-    --show|s)
-        show_ip_list
+    --show | s)
+        show_ips
         ;;
-    --remove|r)
-        remove_ip "$2"
-        ;;
-    --count|n)
+    --count | cnt)
         count_ips
         ;;
     *)
-        echo "Usage: $0 --add <IP_ADDRESS> | a <IP_ADDRESS> | --clean | c | --show | s | --remove <IP_ADDRESS> | r <IP_ADDRESS> | --count | n"
+        echo "Invalid option. Usage: $0 --add <IP_ADDRESS> | --clean | --show | --count"
         exit 1
         ;;
 esac
